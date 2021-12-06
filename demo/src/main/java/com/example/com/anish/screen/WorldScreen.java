@@ -6,18 +6,23 @@ import java.awt.event.KeyEvent;
 // import com.anish.monsters.BubbleSorter;
 // import com.anish.monsters.Monster;
 import com.example.com.anish.monsters.World;
+import com.example.com.anish.monsters.Player;
+import com.example.com.anish.monsters.Number;
 // import com.anish.monsters.Matrix;
 
 import com.example.asciiPanel.AsciiPanel;
 
 public class WorldScreen implements Screen {
 
-    private World world;
+    public World world;
+    public Thread p;
     // String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
         final int size = 16;
+        p = new Thread(world.player);
+        p.start();
     }
 
     private String[] parsePlan(String plan) {
@@ -49,13 +54,33 @@ public class WorldScreen implements Screen {
 
             }
         }
+        int num = world.player.COUNT;
+        int a = num / 10, b = num % 10;
+        Number aNum = new Number(Color.YELLOW, world, a), bNum = new Number(Color.YELLOW, world, b);
+        terminal.write(aNum.getGlyph(), 40, 20, aNum.getColor());
+        terminal.write(bNum.getGlyph(), 41, 20, bNum.getColor());
     }
 
     int i = 0;
 
     @Override
-    public Screen respondToUserInput(KeyEvent key) {
-        world.execute();
+    public Screen respondToUserInput(KeyEvent e) {
+        int dir = 0;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                dir = 0;
+                break;
+            case KeyEvent.VK_DOWN:
+                dir = 1;
+                break;
+            case KeyEvent.VK_LEFT:
+                dir = 2;
+                break;
+            case KeyEvent.VK_RIGHT:
+                dir = 3;
+                break;
+        }
+        world.execute(dir);
         return this;
     }
 

@@ -19,7 +19,7 @@ public class Main extends JFrame implements KeyListener {
 
     public Main() {
         super();
-        terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.TALRYTH_15_15);
+        terminal = new AsciiPanel(World.WIDTH + 20, World.HEIGHT, AsciiFont.TALRYTH_15_15);
         add(terminal);
         pack();
         screen = new WorldScreen();
@@ -55,6 +55,7 @@ public class Main extends JFrame implements KeyListener {
         Main app = new Main();
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);
+        // Thread p = new Thread(screen.world.player);
     }
 
 }
