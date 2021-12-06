@@ -12,6 +12,9 @@ import com.example.com.anish.screen.WorldScreen;
 import com.example.asciiPanel.AsciiFont;
 import com.example.asciiPanel.AsciiPanel;
 
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 public class Main extends JFrame implements KeyListener {
 
     private AsciiPanel terminal;
@@ -24,7 +27,6 @@ public class Main extends JFrame implements KeyListener {
         pack();
         screen = new WorldScreen();
         addKeyListener(this);
-        repaint();
 
     }
 
@@ -51,11 +53,19 @@ public class Main extends JFrame implements KeyListener {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Main app = new Main();
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);
         // Thread p = new Thread(screen.world.player);
+        while (true) {
+            app.repaint();
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

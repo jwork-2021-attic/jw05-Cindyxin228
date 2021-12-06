@@ -16,6 +16,11 @@ public class Thing {
         return this.tile.getyPos();
     }
 
+    public void setPosition(int x, int y) {
+        this.tile.setxPos(x);
+        this.tile.setyPos(y);
+    }
+
     public void setTile(Tile<? extends Thing> tile) {
         this.tile = tile;
     }

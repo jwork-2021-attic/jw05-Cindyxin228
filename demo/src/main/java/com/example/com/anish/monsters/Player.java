@@ -1,48 +1,43 @@
 package com.example.com.anish.monsters;
 
 import java.awt.Color;
+import java.util.concurrent.*;
 
 public class Player extends Creature implements Runnable {
 
-    boolean judgeKey = true, recvKey = true;
-    int direction;
+    boolean check1, check2;
+    public int direction;
     public int COUNT = 0;
 
     public Player(Color color, World world) {
         super(color, (char) 1, world);
+        check1 = check2 = true;
     }
 
-    public synchronized void setKey(int dir) {
-        judgeKey = !recvKey;
-        direction = dir;
+    public synchronized void setKey() {
+        check2 = !check1;
     }
 
     public void playerMove(int dir) {
         Move playMove = new Move(world);
         int x = this.getX(), y = this.getY();
-        switch (dir) {
-            case 0:
-                COUNT += playMove.move(this, x, y, x, y - 1, 3);
-                break;
-            case 1:
-                COUNT += playMove.move(this, x, y, x, y + 1, 3);
-                break;
-            case 2:
-                COUNT += playMove.move(this, x, y, x - 1, y, 3);
-                break;
-            case 3:
-                COUNT += playMove.move(this, x, y, x + 1, y, 3);
-                break;
-        }
+        COUNT += playMove.move(this, x, y, dir, 3);
     }
 
     @Override
     public void run() {
-        while (true) {
-            if (recvKey != judgeKey) {
+        while (this.world.state && !this.world.ifSucceed) {
+            if (check2 != check1) {
                 playerMove(direction);
-                recvKey = judgeKey;
+                check2 = check1;
+            }
+            System.out.println(direction);
+            try {
+                TimeUnit.MILLISECONDS.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+
     }
 }

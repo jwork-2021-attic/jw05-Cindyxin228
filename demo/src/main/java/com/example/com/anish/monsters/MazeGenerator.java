@@ -14,7 +14,6 @@ class MazeGenerator {
     private int dimension;
     public boolean[][] visited;
     public Vector<Node> node; // store the path
-    public int fruitCnt = 0;
     Boolean ifFinished;
 
     MazeGenerator(int dim) {
@@ -29,8 +28,9 @@ class MazeGenerator {
         node = new Vector<Node>();
     }
 
-    public void generateMaze() {
+    public int generateMaze() {
         // set the path
+        int fCnt = 0;
         Random r = new Random();
         for (int i = 0; i < 5; i++) {
             int x = dimension / 5 * i;
@@ -57,9 +57,10 @@ class MazeGenerator {
             int fruitX = r.nextInt(dimension), fruitY = r.nextInt(dimension);
             if (validNextNode(new Node(fruitX, fruitY))) {
                 maze[fruitX][fruitY] = 2;
-                fruitCnt++;
+                fCnt++;
             }
         }
+        return fCnt;
     }
 
     // public void generateMaze() {
