@@ -26,7 +26,7 @@ public class WorldScreen implements Screen {
         final int size = 16;
         p = new Thread(world.player);
         m = new Thread[6];
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             m[i] = new Thread(new Monster(Color.yellow, world));
             m[i].start();
         }
@@ -92,6 +92,7 @@ public class WorldScreen implements Screen {
             printCharacter(terminal, "fail", 32, 10);
         }
 
+        judgeSucceed();
         if (world.ifSucceed == true) {
             printCharacter(terminal, "succeed", 32, 10);
         }

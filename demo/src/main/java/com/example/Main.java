@@ -61,7 +61,7 @@ public class Main extends JFrame implements KeyListener {
         while (true) {
             app.repaint();
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

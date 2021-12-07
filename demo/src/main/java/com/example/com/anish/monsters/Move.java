@@ -12,7 +12,8 @@ public class Move {
     }
 
     private boolean judge(int xPos, int yPos, int t) {
-        if (world.mg.pointOnGrid(xPos, yPos) && world.mg.maze[xPos][yPos] != 0 && world.mg.maze[xPos][yPos] != t)
+        if (world.mg.pointOnGrid(xPos, yPos) && world.getMazeInfo(xPos, yPos) != 0
+                && world.getMazeInfo(xPos, yPos) != t)
             return true;
         return false;
     }
@@ -34,16 +35,15 @@ public class Move {
                 break;
         }
         if (judge(xPos, yPos, t)) {
-            c.setPosition(xPos, yPos);
             world.put(new Floor(world), x, y);
             world.put(c, xPos, yPos);
+            int ttp = world.mg.maze[xPos][yPos];
+            world.setMazeInfo(x, y, 1);
             if (t * world.mg.maze[xPos][yPos] == 12) {
                 world.state = false;
                 return 0;
             }
-            int ttp = world.mg.maze[xPos][yPos];
-            world.mg.maze[x][y] = 1;
-            world.mg.maze[xPos][yPos] = t;
+            world.setMazeInfo(xPos, yPos, t);
             if (ttp == 2) {
                 return 1;
             }

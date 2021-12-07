@@ -35,7 +35,7 @@ public class Monster extends Creature implements Runnable {
             int dir = bfs(new Node(x, y), this.world.mg.maze);
             world.monsterCnt += myMove.move(this, x, y, dir, 4);
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

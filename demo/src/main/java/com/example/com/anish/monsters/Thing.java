@@ -8,11 +8,11 @@ public class Thing {
 
     public Tile<? extends Thing> tile;
 
-    public int getX() {
+    public synchronized int getX() {
         return this.tile.getxPos();
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return this.tile.getyPos();
     }
 

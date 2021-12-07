@@ -57,6 +57,14 @@ public class World {
         player.setKey();
     }
 
+    public synchronized int getMazeInfo(int x, int y) {
+        return mg.maze[x][y];
+    }
+
+    public synchronized void setMazeInfo(int x, int y, int num) {
+        mg.maze[x][y] = num;
+    }
+
     public Thing get(int x, int y) {
         return this.tiles[x][y].getThing();
     }
