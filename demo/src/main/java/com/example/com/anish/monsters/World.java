@@ -61,7 +61,7 @@ public class World {
         return this.tiles[x][y].getThing();
     }
 
-    public void put(Thing t, int x, int y) {
+    public synchronized void put(Thing t, int x, int y) {
         this.tiles[x][y].setThing(t);
     }
 

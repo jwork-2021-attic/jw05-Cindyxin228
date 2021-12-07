@@ -31,7 +31,6 @@ public class Player extends Creature implements Runnable {
                 playerMove(direction);
                 check2 = check1;
             }
-            System.out.println(direction);
             try {
                 TimeUnit.MILLISECONDS.sleep(20);
             } catch (InterruptedException e) {

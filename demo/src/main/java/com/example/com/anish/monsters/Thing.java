@@ -16,7 +16,7 @@ public class Thing {
         return this.tile.getyPos();
     }
 
-    public void setPosition(int x, int y) {
+    public synchronized void setPosition(int x, int y) {
         this.tile.setxPos(x);
         this.tile.setyPos(y);
     }

@@ -16,10 +16,14 @@ public class Monster extends Creature implements Runnable {
         super(color, (char) 2, world);
         Random r = new Random();
         int X = r.nextInt(30), Y = r.nextInt(30);
-        if (world.mg.maze[X][Y] == 1 && (X != 0 || Y != 0)) {
-            world.mg.maze[X][Y] = 4;
-            world.put(this, X, Y);
-            this.setPosition(X, Y);
+        boolean flag = true;
+        while (flag) {
+            if (world.mg.maze[X][Y] == 1 && (X != 0 || Y != 0)) {
+                flag = false;
+                world.mg.maze[X][Y] = 4;
+                world.put(this, X, Y);
+                this.setPosition(X, Y);
+            }
         }
         myMove = new Move(world);
     }
@@ -31,7 +35,7 @@ public class Monster extends Creature implements Runnable {
             int dir = bfs(new Node(x, y), this.world.mg.maze);
             world.monsterCnt += myMove.move(this, x, y, dir, 4);
             try {
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -94,7 +98,7 @@ public class Monster extends Creature implements Runnable {
                             } else
                                 return dir;
                         case 3:
-                            if (node.y + 1 >= WIDTH || maze[node.x + 1][node.y] == 0) {
+                            if (node.x + 1 >= WIDTH || maze[node.x + 1][node.y] == 0) {
                                 myPath[tpX][tpY] = 0;
                                 continue;
                             } else
