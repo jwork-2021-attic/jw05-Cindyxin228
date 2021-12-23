@@ -25,10 +25,14 @@ public class WorldScreen implements Screen {
         world = new World();
         final int size = 16;
         p = new Thread(world.player);
-        m = new Thread[6];
-        for (int i = 0; i < 3; i++) {
+        m = new Thread[10];
+        for (int i = 0; i < 5; i++) {
             m[i] = new Thread(new Monster(Color.yellow, world));
             m[i].start();
+        }
+        while (world.monsterNum < 1) {
+            m[0] = new Thread(new Monster(Color.yellow, world));
+            m[0].start();
         }
         p.start();
     }
@@ -58,11 +62,19 @@ public class WorldScreen implements Screen {
         }
     }
 
-    public void judgeSucceed() {
+    public void judgeFinish() {
         if (world.monsterCnt + world.player.COUNT == world.fruitCnt)
-            world.ifSucceed = true;
-        else
-            world.ifSucceed = false;
+            world.ifFinish = true;
+    }
+
+    public void judgeSucceed() {
+        // System.out.println(world.monsterCnt);
+        // System.out.println(world.player.COUNT);
+        // System.out.println(world.fruitCnt);
+        if (world.ifFinish) {
+            if (world.player.COUNT > world.monsterCnt)
+                world.ifSucceed = true;
+        }
     }
 
     @Override
@@ -92,10 +104,12 @@ public class WorldScreen implements Screen {
             printCharacter(terminal, "fail", 32, 10);
         }
 
+        judgeFinish();
         judgeSucceed();
         if (world.ifSucceed == true) {
             printCharacter(terminal, "succeed", 32, 10);
-        }
+        } else if (world.ifFinish)
+            printCharacter(terminal, "fail", 32, 10);
     }
 
     int i = 0;

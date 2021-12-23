@@ -9,7 +9,9 @@ public class World {
     public Player player;
     public boolean state;
     public boolean ifSucceed;
+    public boolean ifFinish;
     public int monsterCnt;
+    public int monsterNum;
     public int fruitCnt;
 
     private Tile<Thing>[][] tiles;
@@ -19,7 +21,9 @@ public class World {
 
         player = new Player(Color.RED, this);
         state = true;
+        monsterNum = 0;
         ifSucceed = false;
+        ifFinish = false;
         monsterCnt = 0;
 
         if (tiles == null) {

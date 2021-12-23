@@ -21,12 +21,13 @@ public class Player extends Creature implements Runnable {
     public void playerMove(int dir) {
         Move playMove = new Move(world);
         int x = this.getX(), y = this.getY();
-        COUNT += playMove.move(this, x, y, dir, 3);
+        // COUNT +=
+        playMove.move(this, x, y, dir, 3);
     }
 
     @Override
     public void run() {
-        while (this.world.state && !this.world.ifSucceed) {
+        while (this.world.state && !this.world.ifFinish) {
             if (check2 != check1) {
                 playerMove(direction);
                 check2 = check1;

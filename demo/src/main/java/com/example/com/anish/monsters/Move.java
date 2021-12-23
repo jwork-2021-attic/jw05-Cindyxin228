@@ -11,7 +11,7 @@ public class Move {
         world = _world;
     }
 
-    private boolean judge(int xPos, int yPos, int t) {
+    private synchronized boolean judge(int xPos, int yPos, int t) {
         if (world.mg.pointOnGrid(xPos, yPos) && world.getMazeInfo(xPos, yPos) != 0
                 && world.getMazeInfo(xPos, yPos) != t)
             return true;
@@ -45,6 +45,10 @@ public class Move {
             }
             world.setMazeInfo(xPos, yPos, t);
             if (ttp == 2) {
+                if (t == 4)
+                    world.monsterCnt++;
+                else if (t == 3)
+                    world.player.COUNT++;
                 return 1;
             }
         } else if (t == 4) {

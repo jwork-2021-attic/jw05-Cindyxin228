@@ -17,23 +17,27 @@ public class Monster extends Creature implements Runnable {
         Random r = new Random();
         int X = r.nextInt(30), Y = r.nextInt(30);
         boolean flag = true;
-        while (flag) {
+        int cnt = 0;
+        while (flag && cnt <= 10) {
             if (world.mg.maze[X][Y] == 1 && (X != 0 || Y != 0)) {
                 flag = false;
+                world.monsterNum++;
                 world.mg.maze[X][Y] = 4;
                 world.put(this, X, Y);
                 this.setPosition(X, Y);
             }
+            cnt++;
         }
         myMove = new Move(world);
     }
 
     @Override
     public void run() {
-        while (this.world.state && !this.world.ifSucceed) {
+        while (this.world.state && !this.world.ifFinish) {
             int x = this.getX(), y = this.getY();
             int dir = bfs(new Node(x, y), this.world.mg.maze);
-            world.monsterCnt += myMove.move(this, x, y, dir, 4);
+            // world.monsterCnt +=
+            myMove.move(this, x, y, dir, 4);
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
@@ -61,7 +65,14 @@ public class Monster extends Creature implements Runnable {
         while (Q.size() != 0) {
             Node tp = Q.remove();
             for (i = 0; i < 4; i++) {
-                int tpX = node.x + up[i], tpY = node.y + down[i];
+                // System.out.println(tp.x + "tp.x");
+                // System.out.println(tp.y + "tp.y");
+                // System.out.println(up[i] + ": up[" + i);
+                // System.out.println(down[i] + ": down[" + i);
+                int tpX = tp.x + up[i], tpY = tp.y + down[i];
+
+                // System.out.println(tpX);
+                // System.out.println(tpY);
                 if (tpX < 0 || tpY < 0 || tpX >= WIDTH || tpY >= WIDTH || maze[tpX][tpY] == 0) {
                     continue;
                 }

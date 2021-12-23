@@ -55,11 +55,12 @@ class MazeGenerator {
         // set the fruit
         for (int i = 0; i < 100; i++) {
             int fruitX = r.nextInt(dimension), fruitY = r.nextInt(dimension);
-            if (validNextNode(new Node(fruitX, fruitY))) {
+            if (validNextNode(new Node(fruitX, fruitY)) && maze[fruitX][fruitY] == 1) {
                 maze[fruitX][fruitY] = 2;
                 fCnt++;
             }
         }
+        System.out.println(fCnt);
         return fCnt;
     }
 
