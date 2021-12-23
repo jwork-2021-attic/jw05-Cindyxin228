@@ -26,7 +26,7 @@ public class WorldScreen implements Screen {
         final int size = 16;
         p = new Thread(world.player);
         m = new Thread[10];
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             m[i] = new Thread(new Monster(Color.yellow, world));
             m[i].start();
         }
