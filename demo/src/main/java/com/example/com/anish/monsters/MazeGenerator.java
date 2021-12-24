@@ -60,7 +60,6 @@ class MazeGenerator {
                 fCnt++;
             }
         }
-        System.out.println(fCnt);
         return fCnt;
     }
 

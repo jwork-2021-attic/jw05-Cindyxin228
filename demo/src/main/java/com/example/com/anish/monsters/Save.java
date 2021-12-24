@@ -1,6 +1,7 @@
 package com.example.com.anish.monsters;
 
 import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -17,24 +18,35 @@ public class Save {
 
     public Save(World _world) throws IOException {
         world = _world;
-        saveRecord();
     }
 
-    private void saveRecord() throws IOException {
-        FileOutputStream record = new FileOutputStream("./record.txt");
-        BufferedOutputStream stream = new BufferedOutputStream(record);
+    // 0 wall, 1 floor, 2 fruit, 3 player, 4 monster
+    public void saveRecord() throws IOException {
+        FileOutputStream record = null;
         try {
-            stream.write(world.monsterCnt);
-            stream.write(world.player.COUNT);
-            stream.write(world.fruitCnt);
+            record = new FileOutputStream("./record.txt");
+            record.write(world.monsterCnt);
+            record.write(world.player.COUNT);
+            record.write(world.fruitCnt);
             for (int i = 0; i < world.WIDTH; i++) {
-                for (int j = 0; i < world.HEIGHT; j++) {
-                    stream.write(world.mg.maze[i][j]);
+                for (int j = 0; j < world.HEIGHT; j++) {
+                    record.write(world.mg.maze[i][j]);
                 }
             }
         } finally {
-            stream.close();
             record.close();
         }
+        // FileInputStream record1 = null;
+        // try {
+        // record1 = new FileInputStream("./record.txt");
+        // int tp = record1.read();
+        // while (tp != -1) {
+        // System.out.println(tp);
+        // tp = record1.read();
+        // }
+        // } finally {
+        // record.close();
+        // }
+
     }
 }

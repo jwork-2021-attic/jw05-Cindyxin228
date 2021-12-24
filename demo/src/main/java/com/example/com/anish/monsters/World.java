@@ -15,6 +15,7 @@ public class World {
     public int monsterNum;
     public int fruitCnt;
     public Move allMove;
+    public int ifBegin;
 
     private Tile<Thing>[][] tiles;
     MazeGenerator mg;
@@ -28,13 +29,19 @@ public class World {
         ifSucceed = false;
         ifFinish = false;
         monsterCnt = 0;
+        ifBegin = 0;
+        mg = new MazeGenerator(WIDTH);
 
         if (tiles == null) {
             tiles = new Tile[WIDTH][HEIGHT];
         }
 
+        // mg.dfsMaze(0, 0, mg.visited);
+    }
+
+    public void newGame() {
         // set the maze including floor and wall
-        mg = new MazeGenerator(WIDTH);
+
         fruitCnt = mg.generateMaze();
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
@@ -53,7 +60,28 @@ public class World {
         mg.maze[0][0] = 3;
 
         monsters = new Monster[10];
-        // mg.dfsMaze(0, 0, mg.visited);
+    }
+
+    public void continueGame() {
+        monsters = new Monster[10];
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                tiles[i][j] = new Tile<>(i, j);
+                tiles[i][j].setThing(new Floor(this));
+                if (mg.maze[i][j] == 0) {
+                    tiles[i][j].setThing(new Wall(this));
+                } else if (mg.maze[i][j] == 2) {
+                    tiles[i][j].setThing(new Fruit(Color.GRAY, this));
+                } else if (mg.maze[i][j] == 3) {
+                    tiles[i][j].setThing(player);
+                    player.setPosition(i, j);
+                    mg.maze[i][j] = 3;
+                } else if (mg.maze[i][j] == 4) {
+                    monsters[monsterNum] = new Monster(Color.yellow, this, i, j);
+                    monsterNum++;
+                }
+            }
+        }
     }
 
     public void execute(int dir) {

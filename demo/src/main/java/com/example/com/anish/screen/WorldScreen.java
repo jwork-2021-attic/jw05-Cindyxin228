@@ -2,6 +2,7 @@ package com.example.com.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 // import com.anish.monsters.BubbleSorter;
 // import com.anish.monsters.Monster;
@@ -10,6 +11,8 @@ import com.example.com.anish.monsters.Player;
 import com.example.com.anish.monsters.Number;
 import com.example.com.anish.monsters.Character;
 import com.example.com.anish.monsters.Monster;
+import com.example.com.anish.monsters.Save;
+import com.example.com.anish.monsters.Continue;
 // import com.anish.monsters.Matrix;
 
 import com.example.asciiPanel.AsciiPanel;
@@ -19,19 +22,28 @@ public class WorldScreen implements Screen {
     public World world;
     private Thread p;
     private Thread[] m;
-    boolean ifBegin;
+
+    private Save mySave;
+    private Continue myContinue;
     // String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
         final int size = 16;
-        ifBegin = false;
+        world.ifBegin = 0;
         p = new Thread(world.player);
         m = new Thread[10];
+        try {
+            mySave = new Save(world);
+            myContinue = new Continue(world);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startThread() {
-        ifBegin = true;
+        world.newGame();
+        world.ifBegin = 1;
         for (int i = 0; i < 3; i++) {
             int tp = world.monsterNum;
             world.monsters[tp] = new Monster(Color.yellow, world);
@@ -47,8 +59,20 @@ public class WorldScreen implements Screen {
         p.start();
     }
 
-    private void continueThread() {
-        ifBegin = true;
+    private void continueThread() throws IOException {
+        System.out.println("continue");
+        boolean exist = myContinue.readRecord();
+        if (exist) {
+            world.continueGame();
+            for (int i = 0; i < world.monsterNum; i++) {
+                m[i] = new Thread(world.monsters[i]);
+                m[i].start();
+            }
+            world.ifBegin = 2;
+            p.start();
+        } else {
+            startThread();
+        }
     }
 
     private String[] parsePlan(String plan) {
@@ -126,7 +150,7 @@ public class WorldScreen implements Screen {
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        if (!ifBegin) {
+        if (world.ifBegin == 0) {
             printCharacter(terminal, "please", 1, 1);
             printCharacter(terminal, "press", 8, 1);
             printCharacter(terminal, "n", 14, 1);
@@ -148,7 +172,7 @@ public class WorldScreen implements Screen {
 
     @Override
     public Screen respondToUserInput(KeyEvent e) {
-        if (!ifBegin) {
+        if (world.ifBegin == 0) {
             // new game "N"
             // continue "c"
             switch (e.getKeyCode()) {
@@ -156,9 +180,15 @@ public class WorldScreen implements Screen {
                     startThread();
                     break;
                 case 67:
+
+                    try {
+                        continueThread();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                     break;
             }
-        } else if (ifBegin) {
+        } else {
             int dir = 0;
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
@@ -173,11 +203,18 @@ public class WorldScreen implements Screen {
                 case KeyEvent.VK_RIGHT:
                     dir = 3;
                     break;
-                // case 83:
-
+                case 83:
+                    try {
+                        mySave.saveRecord();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    break;
             }
-            world.player.direction = dir;
-            world.player.setKey();
+            if (e.getKeyCode() != 83) {
+                world.player.direction = dir;
+                world.player.setKey();
+            }
         }
         return this;
     }

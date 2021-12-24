@@ -21,7 +21,6 @@ public class Monster extends Creature implements Runnable {
             if (world.mg.maze[X][Y] == 1 && (X != 0 || Y != 0)) {
                 flag = false;
                 world.monsterNum++;
-                System.out.println(world.monsterNum);
                 world.mg.maze[X][Y] = 4;
                 world.put(this, X, Y);
                 this.setPosition(X, Y);
