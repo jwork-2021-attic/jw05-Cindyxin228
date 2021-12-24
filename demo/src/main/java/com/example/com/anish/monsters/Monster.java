@@ -22,12 +22,21 @@ public class Monster extends Creature implements Runnable {
             if (world.mg.maze[X][Y] == 1 && (X != 0 || Y != 0)) {
                 flag = false;
                 world.monsterNum++;
+                System.out.println(world.monsterNum);
                 world.mg.maze[X][Y] = 4;
                 world.put(this, X, Y);
                 this.setPosition(X, Y);
             }
             cnt++;
         }
+        myMove = new Move(world);
+    }
+
+    public Monster(Color color, World world, int x, int y) {
+        super(color, (char) 2, world);
+        world.mg.maze[x][y] = 4;
+        world.put(this, x, y);
+        this.setPosition(x, y);
         myMove = new Move(world);
     }
 

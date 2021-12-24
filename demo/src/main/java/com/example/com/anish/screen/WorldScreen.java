@@ -27,8 +27,12 @@ public class WorldScreen implements Screen {
         p = new Thread(world.player);
         m = new Thread[10];
         for (int i = 0; i < 3; i++) {
-            m[i] = new Thread(new Monster(Color.yellow, world));
-            m[i].start();
+            int tp = world.monsterNum;
+            world.monsters[tp] = new Monster(Color.yellow, world);
+            if (tp < world.monsterNum) {
+                m[tp] = new Thread(world.monsters[tp]);
+                m[tp].start();
+            }
         }
         while (world.monsterNum < 1) {
             m[0] = new Thread(new Monster(Color.yellow, world));
@@ -130,6 +134,8 @@ public class WorldScreen implements Screen {
             case KeyEvent.VK_RIGHT:
                 dir = 3;
                 break;
+            case 83:
+
         }
         world.player.direction = dir;
         world.player.setKey();

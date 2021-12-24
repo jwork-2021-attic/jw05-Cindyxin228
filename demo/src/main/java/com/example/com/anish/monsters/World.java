@@ -7,6 +7,7 @@ public class World {
     public static final int WIDTH = 30;
     public static final int HEIGHT = 30;
     public Player player;
+    public Monster[] monsters;
     public boolean state;
     public boolean ifSucceed;
     public boolean ifFinish;
@@ -49,6 +50,7 @@ public class World {
         player.setPosition(0, 0);
         mg.maze[0][0] = 3;
 
+        monsters = new Monster[10];
         // mg.dfsMaze(0, 0, mg.visited);
     }
 
