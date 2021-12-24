@@ -19,13 +19,19 @@ public class WorldScreen implements Screen {
     public World world;
     private Thread p;
     private Thread[] m;
+    boolean ifBegin;
     // String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
         final int size = 16;
+        ifBegin = false;
         p = new Thread(world.player);
         m = new Thread[10];
+    }
+
+    private void startThread() {
+        ifBegin = true;
         for (int i = 0; i < 3; i++) {
             int tp = world.monsterNum;
             world.monsters[tp] = new Monster(Color.yellow, world);
@@ -39,6 +45,10 @@ public class WorldScreen implements Screen {
             m[0].start();
         }
         p.start();
+    }
+
+    private void continueThread() {
+        ifBegin = true;
     }
 
     private String[] parsePlan(String plan) {
@@ -81,9 +91,7 @@ public class WorldScreen implements Screen {
         }
     }
 
-    @Override
-    public void displayOutput(AsciiPanel terminal) {
-
+    private void displayBegin(AsciiPanel terminal) {
         for (int x = 0; x < World.WIDTH; x++) {
             for (int y = 0; y < World.HEIGHT; y++) {
 
@@ -116,29 +124,61 @@ public class WorldScreen implements Screen {
             printCharacter(terminal, "fail", 32, 10);
     }
 
+    @Override
+    public void displayOutput(AsciiPanel terminal) {
+        if (!ifBegin) {
+            printCharacter(terminal, "please", 1, 1);
+            printCharacter(terminal, "press", 8, 1);
+            printCharacter(terminal, "n", 14, 1);
+            printCharacter(terminal, "to", 16, 1);
+            printCharacter(terminal, "begin", 19, 1);
+            printCharacter(terminal, "a", 25, 1);
+            printCharacter(terminal, "new", 27, 1);
+            printCharacter(terminal, "game", 31, 1);
+            printCharacter(terminal, "or", 36, 1);
+            printCharacter(terminal, "c", 39, 1);
+            printCharacter(terminal, "to", 41, 1);
+            printCharacter(terminal, "continue", 1, 3);
+        } else {
+            displayBegin(terminal);
+        }
+    }
+
     int i = 0;
 
     @Override
     public Screen respondToUserInput(KeyEvent e) {
-        int dir = 0;
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                dir = 0;
-                break;
-            case KeyEvent.VK_DOWN:
-                dir = 1;
-                break;
-            case KeyEvent.VK_LEFT:
-                dir = 2;
-                break;
-            case KeyEvent.VK_RIGHT:
-                dir = 3;
-                break;
-            case 83:
+        if (!ifBegin) {
+            // new game "N"
+            // continue "c"
+            switch (e.getKeyCode()) {
+                case 78:
+                    startThread();
+                    break;
+                case 67:
+                    break;
+            }
+        } else if (ifBegin) {
+            int dir = 0;
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    dir = 0;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    dir = 1;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    dir = 2;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    dir = 3;
+                    break;
+                // case 83:
 
+            }
+            world.player.direction = dir;
+            world.player.setKey();
         }
-        world.player.direction = dir;
-        world.player.setKey();
         return this;
     }
 
