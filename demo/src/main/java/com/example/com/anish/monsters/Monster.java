@@ -10,7 +10,6 @@ import javax.lang.model.util.ElementScanner6;
 public class Monster extends Creature implements Runnable {
 
     public static final int WIDTH = 30;
-    Move myMove;
 
     public Monster(Color color, World world) {
         super(color, (char) 2, world);
@@ -29,7 +28,6 @@ public class Monster extends Creature implements Runnable {
             }
             cnt++;
         }
-        myMove = new Move(world);
     }
 
     public Monster(Color color, World world, int x, int y) {
@@ -37,7 +35,6 @@ public class Monster extends Creature implements Runnable {
         world.mg.maze[x][y] = 4;
         world.put(this, x, y);
         this.setPosition(x, y);
-        myMove = new Move(world);
     }
 
     @Override
@@ -46,7 +43,7 @@ public class Monster extends Creature implements Runnable {
             int x = this.getX(), y = this.getY();
             int dir = bfs(new Node(x, y), this.world.mg.maze);
             // world.monsterCnt +=
-            myMove.move(this, x, y, dir, 4);
+            world.allMove.move(this, x, y, dir, 4);
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {

@@ -14,12 +14,14 @@ public class World {
     public int monsterCnt;
     public int monsterNum;
     public int fruitCnt;
+    public Move allMove;
 
     private Tile<Thing>[][] tiles;
     MazeGenerator mg;
 
     public World() {
 
+        allMove = new Move(this);
         player = new Player(Color.RED, this);
         state = true;
         monsterNum = 0;

@@ -19,10 +19,9 @@ public class Player extends Creature implements Runnable {
     }
 
     public void playerMove(int dir) {
-        Move playMove = new Move(world);
         int x = this.getX(), y = this.getY();
         // COUNT +=
-        playMove.move(this, x, y, dir, 3);
+        world.allMove.move(this, x, y, dir, 3);
     }
 
     @Override
