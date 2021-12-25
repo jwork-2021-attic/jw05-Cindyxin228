@@ -41,7 +41,7 @@ public class WorldScreen implements Screen {
         }
     }
 
-    private void startThread() {
+    public void startThread() {
         world.newGame();
         world.ifBegin = 1;
         for (int i = 0; i < 3; i++) {
@@ -59,7 +59,7 @@ public class WorldScreen implements Screen {
         p.start();
     }
 
-    private void continueThread() throws IOException {
+    public void continueThread() throws IOException {
         System.out.println("continue");
         boolean exist = myContinue.readRecord();
         if (exist) {

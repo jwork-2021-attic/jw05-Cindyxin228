@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Save.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.com.anish.monsters</a> &gt; <span class="el_source">Save.java</span></div><h1>Save.java</h1><pre class="source lang-java linenums">package com.example.com.anish.monsters;
+
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+//To save all information
+//score(monster int, player int, fruit)
+/*position
+    player��s x and y
+    monster's number + monsters' x and y
+    maze[x][y]��s value(the both above can be accessed by this)
+*/
+
+public class Save {
+    World world;
+
+<span class="fc" id="L19">    public Save(World _world) throws IOException {</span>
+<span class="fc" id="L20">        world = _world;</span>
+<span class="fc" id="L21">    }</span>
+
+    // 0 wall, 1 floor, 2 fruit, 3 player, 4 monster
+    public void saveRecord() throws IOException {
+<span class="nc" id="L25">        FileOutputStream record = null;</span>
+        try {
+<span class="nc" id="L27">            record = new FileOutputStream(&quot;./record.txt&quot;);</span>
+<span class="nc" id="L28">            record.write(world.monsterCnt);</span>
+<span class="nc" id="L29">            record.write(world.player.COUNT);</span>
+<span class="nc" id="L30">            record.write(world.fruitCnt);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">            for (int i = 0; i &lt; world.WIDTH; i++) {</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">                for (int j = 0; j &lt; world.HEIGHT; j++) {</span>
+<span class="nc" id="L33">                    record.write(world.mg.maze[i][j]);</span>
+                }
+            }
+        } finally {
+<span class="nc" id="L37">            record.close();</span>
+        }
+        // FileInputStream record1 = null;
+        // try {
+        // record1 = new FileInputStream(&quot;./record.txt&quot;);
+        // int tp = record1.read();
+        // while (tp != -1) {
+        // System.out.println(tp);
+        // tp = record1.read();
+        // }
+        // } finally {
+        // record.close();
+        // }
+
+<span class="nc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

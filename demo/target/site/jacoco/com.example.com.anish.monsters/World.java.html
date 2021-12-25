@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>World.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.com.anish.monsters</a> &gt; <span class="el_source">World.java</span></div><h1>World.java</h1><pre class="source lang-java linenums">package com.example.com.anish.monsters;
+
+import java.awt.Color;
+
+public class World {
+
+    public static final int WIDTH = 30;
+    public static final int HEIGHT = 30;
+    public Player player;
+    public Monster[] monsters;
+    public boolean state;
+    public boolean ifSucceed;
+    public boolean ifFinish;
+    public int monsterCnt;
+    public int monsterNum;
+    public int fruitCnt;
+    public Move allMove;
+    public int ifBegin;
+
+    private Tile&lt;Thing&gt;[][] tiles;
+    MazeGenerator mg;
+
+<span class="fc" id="L23">    public World() {</span>
+
+<span class="fc" id="L25">        allMove = new Move(this);</span>
+<span class="fc" id="L26">        player = new Player(Color.RED, this);</span>
+<span class="fc" id="L27">        state = true;</span>
+<span class="fc" id="L28">        monsterNum = 0;</span>
+<span class="fc" id="L29">        ifSucceed = false;</span>
+<span class="fc" id="L30">        ifFinish = false;</span>
+<span class="fc" id="L31">        monsterCnt = 0;</span>
+<span class="fc" id="L32">        ifBegin = 0;</span>
+<span class="fc" id="L33">        mg = new MazeGenerator(WIDTH);</span>
+
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (tiles == null) {</span>
+<span class="fc" id="L36">            tiles = new Tile[WIDTH][HEIGHT];</span>
+        }
+
+        // mg.dfsMaze(0, 0, mg.visited);
+<span class="fc" id="L40">    }</span>
+
+    public void newGame() {
+        // set the maze including floor and wall
+
+<span class="fc" id="L45">        fruitCnt = mg.generateMaze();</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (int i = 0; i &lt; WIDTH; i++) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            for (int j = 0; j &lt; HEIGHT; j++) {</span>
+<span class="fc" id="L48">                tiles[i][j] = new Tile&lt;&gt;(i, j);</span>
+<span class="fc" id="L49">                tiles[i][j].setThing(new Floor(this));</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                if (mg.maze[i][j] == 0) {</span>
+<span class="fc" id="L51">                    tiles[i][j].setThing(new Wall(this));</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                } else if (mg.maze[i][j] == 2) {</span>
+<span class="fc" id="L53">                    tiles[i][j].setThing(new Fruit(Color.GRAY, this));</span>
+                }
+            }
+        }
+
+<span class="fc" id="L58">        tiles[0][0].setThing(player);</span>
+<span class="fc" id="L59">        player.setPosition(0, 0);</span>
+<span class="fc" id="L60">        mg.maze[0][0] = 3;</span>
+
+<span class="fc" id="L62">        monsters = new Monster[10];</span>
+<span class="fc" id="L63">    }</span>
+
+    public void continueGame() {
+<span class="nc" id="L66">        monsters = new Monster[10];</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (int i = 0; i &lt; WIDTH; i++) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            for (int j = 0; j &lt; HEIGHT; j++) {</span>
+<span class="nc" id="L69">                tiles[i][j] = new Tile&lt;&gt;(i, j);</span>
+<span class="nc" id="L70">                tiles[i][j].setThing(new Floor(this));</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                if (mg.maze[i][j] == 0) {</span>
+<span class="nc" id="L72">                    tiles[i][j].setThing(new Wall(this));</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                } else if (mg.maze[i][j] == 2) {</span>
+<span class="nc" id="L74">                    tiles[i][j].setThing(new Fruit(Color.GRAY, this));</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                } else if (mg.maze[i][j] == 3) {</span>
+<span class="nc" id="L76">                    tiles[i][j].setThing(player);</span>
+<span class="nc" id="L77">                    player.setPosition(i, j);</span>
+<span class="nc" id="L78">                    mg.maze[i][j] = 3;</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">                } else if (mg.maze[i][j] == 4) {</span>
+<span class="nc" id="L80">                    monsters[monsterNum] = new Monster(Color.yellow, this, i, j);</span>
+<span class="nc" id="L81">                    monsterNum++;</span>
+                }
+            }
+        }
+<span class="nc" id="L85">    }</span>
+
+    public void execute(int dir) {
+        // if (COUNT &lt; mg.node.size()) {
+        // Node tp = mg.node.elementAt(COUNT);
+        // tiles[tp.x][tp.y].setThing(new Monster(new Color(255, 0, 0), this));
+        // COUNT++;
+        // }
+<span class="nc" id="L93">        player.setKey();</span>
+<span class="nc" id="L94">    }</span>
+
+    public synchronized int getMazeInfo(int x, int y) {
+<span class="fc" id="L97">        return mg.maze[x][y];</span>
+    }
+
+    public synchronized void setMazeInfo(int x, int y, int num) {
+<span class="fc" id="L101">        mg.maze[x][y] = num;</span>
+<span class="fc" id="L102">    }</span>
+
+    public Thing get(int x, int y) {
+<span class="nc" id="L105">        return this.tiles[x][y].getThing();</span>
+    }
+
+    public synchronized void put(Thing t, int x, int y) {
+<span class="fc" id="L109">        this.tiles[x][y].setThing(t);</span>
+<span class="fc" id="L110">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

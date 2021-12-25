@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorldScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.com.anish.screen</a> &gt; <span class="el_source">WorldScreen.java</span></div><h1>WorldScreen.java</h1><pre class="source lang-java linenums">package com.example.com.anish.screen;
+
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+// import com.anish.monsters.BubbleSorter;
+// import com.anish.monsters.Monster;
+import com.example.com.anish.monsters.World;
+import com.example.com.anish.monsters.Player;
+import com.example.com.anish.monsters.Number;
+import com.example.com.anish.monsters.Character;
+import com.example.com.anish.monsters.Monster;
+import com.example.com.anish.monsters.Save;
+import com.example.com.anish.monsters.Continue;
+// import com.anish.monsters.Matrix;
+
+import com.example.asciiPanel.AsciiPanel;
+
+public class WorldScreen implements Screen {
+
+    public World world;
+    private Thread p;
+    private Thread[] m;
+
+    private Save mySave;
+    private Continue myContinue;
+    // String[] sortSteps;
+
+<span class="fc" id="L30">    public WorldScreen() {</span>
+<span class="fc" id="L31">        world = new World();</span>
+<span class="fc" id="L32">        final int size = 16;</span>
+<span class="fc" id="L33">        world.ifBegin = 0;</span>
+<span class="fc" id="L34">        p = new Thread(world.player);</span>
+<span class="fc" id="L35">        m = new Thread[10];</span>
+        try {
+<span class="fc" id="L37">            mySave = new Save(world);</span>
+<span class="fc" id="L38">            myContinue = new Continue(world);</span>
+<span class="nc" id="L39">        } catch (IOException e) {</span>
+<span class="nc" id="L40">            e.printStackTrace();</span>
+<span class="fc" id="L41">        }</span>
+<span class="fc" id="L42">    }</span>
+
+    public void startThread() {
+<span class="fc" id="L45">        world.newGame();</span>
+<span class="fc" id="L46">        world.ifBegin = 1;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        for (int i = 0; i &lt; 3; i++) {</span>
+<span class="fc" id="L48">            int tp = world.monsterNum;</span>
+<span class="fc" id="L49">            world.monsters[tp] = new Monster(Color.yellow, world);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (tp &lt; world.monsterNum) {</span>
+<span class="fc" id="L51">                m[tp] = new Thread(world.monsters[tp]);</span>
+<span class="fc" id="L52">                m[tp].start();</span>
+            }
+        }
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        while (world.monsterNum &lt; 1) {</span>
+<span class="nc" id="L56">            m[0] = new Thread(new Monster(Color.yellow, world));</span>
+<span class="nc" id="L57">            m[0].start();</span>
+        }
+<span class="fc" id="L59">        p.start();</span>
+<span class="fc" id="L60">    }</span>
+
+    public void continueThread() throws IOException {
+<span class="nc" id="L63">        System.out.println(&quot;continue&quot;);</span>
+<span class="nc" id="L64">        boolean exist = myContinue.readRecord();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (exist) {</span>
+<span class="nc" id="L66">            world.continueGame();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            for (int i = 0; i &lt; world.monsterNum; i++) {</span>
+<span class="nc" id="L68">                m[i] = new Thread(world.monsters[i]);</span>
+<span class="nc" id="L69">                m[i].start();</span>
+            }
+<span class="nc" id="L71">            world.ifBegin = 2;</span>
+<span class="nc" id="L72">            p.start();</span>
+        } else {
+<span class="nc" id="L74">            startThread();</span>
+        }
+<span class="nc" id="L76">    }</span>
+
+    private String[] parsePlan(String plan) {
+<span class="nc" id="L79">        return plan.split(&quot;\n&quot;);</span>
+    }
+
+    // private void execute(Monster[] bros, String step) {
+    // String[] couple = step.split(&quot;&lt;-&gt;&quot;);
+    // getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros,
+    // Integer.parseInt(couple[1])));
+    // }
+
+    // private Monster getBroByRank(Monster[] bros, int rank) {
+    // for (Monster bro : bros) {
+    // if (bro.getRank() == rank) {
+    // return bro;
+    // }
+    // }
+    // return null;
+    // }
+    private void printCharacter(AsciiPanel terminal, String s, int x, int y) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        for (int i = 0; i &lt; s.length(); i++) {</span>
+<span class="nc" id="L98">            Character c = new Character(Color.PINK, world, s.charAt(i) - 'a');</span>
+<span class="nc" id="L99">            terminal.write(c.getGlyph(), x + i, y, c.getColor());</span>
+        }
+<span class="nc" id="L101">    }</span>
+
+    public void judgeFinish() {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (world.monsterCnt + world.player.COUNT == world.fruitCnt)</span>
+<span class="nc" id="L105">            world.ifFinish = true;</span>
+<span class="nc" id="L106">    }</span>
+
+    public void judgeSucceed() {
+        // System.out.println(world.monsterCnt);
+        // System.out.println(world.player.COUNT);
+        // System.out.println(world.fruitCnt);
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (world.ifFinish) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            if (world.player.COUNT &gt; world.monsterCnt)</span>
+<span class="nc" id="L114">                world.ifSucceed = true;</span>
+        }
+<span class="nc" id="L116">    }</span>
+
+    private void displayBegin(AsciiPanel terminal) {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        for (int x = 0; x &lt; World.WIDTH; x++) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            for (int y = 0; y &lt; World.HEIGHT; y++) {</span>
+
+<span class="nc" id="L122">                terminal.write(world.get(x, y).getGlyph(), x, y, world.get(x, y).getColor());</span>
+
+            }
+        }
+<span class="nc" id="L126">        int num = world.player.COUNT;</span>
+<span class="nc" id="L127">        int a = num / 10, b = num % 10;</span>
+<span class="nc" id="L128">        Number aNum = new Number(Color.PINK, world, a), bNum = new Number(Color.PINK, world, b);</span>
+<span class="nc" id="L129">        printCharacter(terminal, &quot;player&quot;, 32, 20);</span>
+<span class="nc" id="L130">        terminal.write(aNum.getGlyph(), 40, 20, aNum.getColor());</span>
+<span class="nc" id="L131">        terminal.write(bNum.getGlyph(), 41, 20, bNum.getColor());</span>
+
+<span class="nc" id="L133">        int c = world.monsterCnt / 10, d = world.monsterCnt % 10;</span>
+<span class="nc" id="L134">        Number cNum = new Number(Color.PINK, world, c), dNum = new Number(Color.PINK, world, d);</span>
+<span class="nc" id="L135">        printCharacter(terminal, &quot;monster&quot;, 32, 15);</span>
+<span class="nc" id="L136">        terminal.write(cNum.getGlyph(), 40, 15, cNum.getColor());</span>
+<span class="nc" id="L137">        terminal.write(dNum.getGlyph(), 41, 15, dNum.getColor());</span>
+
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (world.state == false) {</span>
+<span class="nc" id="L140">            printCharacter(terminal, &quot;fail&quot;, 32, 10);</span>
+        }
+
+<span class="nc" id="L143">        judgeFinish();</span>
+<span class="nc" id="L144">        judgeSucceed();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (world.ifSucceed == true) {</span>
+<span class="nc" id="L146">            printCharacter(terminal, &quot;succeed&quot;, 32, 10);</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        } else if (world.ifFinish)</span>
+<span class="nc" id="L148">            printCharacter(terminal, &quot;fail&quot;, 32, 10);</span>
+<span class="nc" id="L149">    }</span>
+
+    @Override
+    public void displayOutput(AsciiPanel terminal) {
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (world.ifBegin == 0) {</span>
+<span class="nc" id="L154">            printCharacter(terminal, &quot;please&quot;, 1, 1);</span>
+<span class="nc" id="L155">            printCharacter(terminal, &quot;press&quot;, 8, 1);</span>
+<span class="nc" id="L156">            printCharacter(terminal, &quot;n&quot;, 14, 1);</span>
+<span class="nc" id="L157">            printCharacter(terminal, &quot;to&quot;, 16, 1);</span>
+<span class="nc" id="L158">            printCharacter(terminal, &quot;begin&quot;, 19, 1);</span>
+<span class="nc" id="L159">            printCharacter(terminal, &quot;a&quot;, 25, 1);</span>
+<span class="nc" id="L160">            printCharacter(terminal, &quot;new&quot;, 27, 1);</span>
+<span class="nc" id="L161">            printCharacter(terminal, &quot;game&quot;, 31, 1);</span>
+<span class="nc" id="L162">            printCharacter(terminal, &quot;or&quot;, 36, 1);</span>
+<span class="nc" id="L163">            printCharacter(terminal, &quot;c&quot;, 39, 1);</span>
+<span class="nc" id="L164">            printCharacter(terminal, &quot;to&quot;, 41, 1);</span>
+<span class="nc" id="L165">            printCharacter(terminal, &quot;continue&quot;, 1, 3);</span>
+        } else {
+<span class="nc" id="L167">            displayBegin(terminal);</span>
+        }
+<span class="nc" id="L169">    }</span>
+
+<span class="fc" id="L171">    int i = 0;</span>
+
+    @Override
+    public Screen respondToUserInput(KeyEvent e) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (world.ifBegin == 0) {</span>
+            // new game &quot;N&quot;
+            // continue &quot;c&quot;
+<span class="nc bnc" id="L178" title="All 3 branches missed.">            switch (e.getKeyCode()) {</span>
+                case 78:
+<span class="nc" id="L180">                    startThread();</span>
+<span class="nc" id="L181">                    break;</span>
+                case 67:
+
+                    try {
+<span class="nc" id="L185">                        continueThread();</span>
+<span class="nc" id="L186">                    } catch (IOException e1) {</span>
+<span class="nc" id="L187">                        e1.printStackTrace();</span>
+<span class="nc" id="L188">                    }</span>
+<span class="nc" id="L189">                    break;</span>
+            }
+        } else {
+<span class="nc" id="L192">            int dir = 0;</span>
+<span class="nc bnc" id="L193" title="All 6 branches missed.">            switch (e.getKeyCode()) {</span>
+                case KeyEvent.VK_UP:
+<span class="nc" id="L195">                    dir = 0;</span>
+<span class="nc" id="L196">                    break;</span>
+                case KeyEvent.VK_DOWN:
+<span class="nc" id="L198">                    dir = 1;</span>
+<span class="nc" id="L199">                    break;</span>
+                case KeyEvent.VK_LEFT:
+<span class="nc" id="L201">                    dir = 2;</span>
+<span class="nc" id="L202">                    break;</span>
+                case KeyEvent.VK_RIGHT:
+<span class="nc" id="L204">                    dir = 3;</span>
+<span class="nc" id="L205">                    break;</span>
+                case 83:
+                    try {
+<span class="nc" id="L208">                        mySave.saveRecord();</span>
+<span class="nc" id="L209">                    } catch (IOException e1) {</span>
+<span class="nc" id="L210">                        e1.printStackTrace();</span>
+<span class="nc" id="L211">                    }</span>
+                    break;
+            }
+<span class="nc bnc" id="L214" title="All 2 branches missed.">            if (e.getKeyCode() != 83) {</span>
+<span class="nc" id="L215">                world.player.direction = dir;</span>
+<span class="nc" id="L216">                world.player.setKey();</span>
+            }
+        }
+<span class="nc" id="L219">        return this;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

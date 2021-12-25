@@ -39,7 +39,9 @@
 此外：
 - 请使用maven进行所有第三方库的依赖管理和项目自动化构建；
 - 请为自己的代码编写junit单元测试用例，代码测试覆盖率不低于50%（vscode请使用Coverage Gutters扩展，intellij IDEA请run with coverage）。
-
+  mvn test
+  mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test
+  mvn org.jacoco:jacoco-maven-plugin:report
 
 # jw07
 
