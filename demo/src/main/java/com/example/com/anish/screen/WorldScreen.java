@@ -20,7 +20,7 @@ import com.example.asciiPanel.AsciiPanel;
 public class WorldScreen implements Screen {
 
     public World world;
-    private Thread p;
+    private Thread[] p;
     private Thread[] m;
 
     private Save mySave;
@@ -31,7 +31,7 @@ public class WorldScreen implements Screen {
         world = new World();
         final int size = 16;
         world.ifBegin = 0;
-        p = new Thread(world.player);
+        p = new Thread[20];
         m = new Thread[10];
         try {
             mySave = new Save(world);
@@ -41,8 +41,8 @@ public class WorldScreen implements Screen {
         }
     }
 
-    public void startThread() {
-        world.newGame();
+    public void startThread(int _playerNum) {
+        world.newGame(_playerNum);
         world.ifBegin = 1;
         for (int i = 0; i < 3; i++) {
             int tp = world.monsterNum;
@@ -56,11 +56,15 @@ public class WorldScreen implements Screen {
             m[0] = new Thread(new Monster(Color.yellow, world));
             m[0].start();
         }
-        p.start();
+        for (int i = 0; i < _playerNum; i++) {
+            p[i] = new Thread(world.players[i]);
+            p[i].start();
+        }
     }
 
-    public void continueThread() throws IOException {
+    public void continueThread(int _playerNum) throws IOException {
         System.out.println("continue");
+        world.playerNum = _playerNum;
         boolean exist = myContinue.readRecord();
         if (exist) {
             world.continueGame();
@@ -69,9 +73,12 @@ public class WorldScreen implements Screen {
                 m[i].start();
             }
             world.ifBegin = 2;
-            p.start();
+            for (int i = 0; i < world.playerNum; i++) {
+                p[i] = new Thread(world.players[i]);
+                p[i].start();
+            }
         } else {
-            startThread();
+            startThread(_playerNum);
         }
     }
 
@@ -101,7 +108,7 @@ public class WorldScreen implements Screen {
     }
 
     public void judgeFinish() {
-        if (world.monsterCnt + world.player.COUNT == world.fruitCnt)
+        if (world.monsterCnt + world.playerCnt == world.fruitCnt)
             world.ifFinish = true;
     }
 
@@ -110,7 +117,7 @@ public class WorldScreen implements Screen {
         // System.out.println(world.player.COUNT);
         // System.out.println(world.fruitCnt);
         if (world.ifFinish) {
-            if (world.player.COUNT > world.monsterCnt)
+            if (world.playerCnt > world.monsterCnt)
                 world.ifSucceed = true;
         }
     }
@@ -123,7 +130,7 @@ public class WorldScreen implements Screen {
 
             }
         }
-        int num = world.player.COUNT;
+        int num = world.playerCnt;
         int a = num / 10, b = num % 10;
         Number aNum = new Number(Color.PINK, world, a), bNum = new Number(Color.PINK, world, b);
         printCharacter(terminal, "player", 32, 20);
@@ -177,12 +184,12 @@ public class WorldScreen implements Screen {
             // continue "c"
             switch (e.getKeyCode()) {
                 case 78:
-                    startThread();
+                    startThread(1);
                     break;
                 case 67:
 
                     try {
-                        continueThread();
+                        continueThread(1);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -212,8 +219,8 @@ public class WorldScreen implements Screen {
                     break;
             }
             if (e.getKeyCode() != 83) {
-                world.player.direction = dir;
-                world.player.setKey();
+                world.players[0].direction = dir;
+                world.players[0].setKey();
             }
         }
         return this;

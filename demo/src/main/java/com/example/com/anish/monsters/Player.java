@@ -7,11 +7,12 @@ public class Player extends Creature implements Runnable {
 
     boolean check1, check2;
     public int direction;
-    public int COUNT = 0;
+    public int id;
 
     public Player(Color color, World world) {
         super(color, (char) 1, world);
         check1 = check2 = true;
+        id = 10;
     }
 
     public synchronized void setKey() {
@@ -21,7 +22,7 @@ public class Player extends Creature implements Runnable {
     public void playerMove(int dir) {
         int x = this.getX(), y = this.getY();
         // COUNT +=
-        world.allMove.move(this, x, y, dir, 3);
+        world.allMove.move(this, x, y, dir, id);
     }
 
     @Override

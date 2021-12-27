@@ -16,12 +16,12 @@ public class AppTest {
     @Test
     public void shouldAnswerWithTrue() {
         WorldScreen screen = new WorldScreen();
-        screen.startThread();
+        screen.startThread(1);
         // down
         int cnt = 0;
         while (++cnt < 3) {
-            screen.world.player.direction = 1;
-            screen.world.player.setKey();
+            screen.world.players[0].direction = 1;
+            screen.world.players[0].setKey();
         }
         assertTrue(true);
     }

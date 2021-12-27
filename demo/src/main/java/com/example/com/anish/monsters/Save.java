@@ -26,7 +26,7 @@ public class Save {
         try {
             record = new FileOutputStream("./record.txt");
             record.write(world.monsterCnt);
-            record.write(world.player.COUNT);
+            record.write(world.playerCnt);
             record.write(world.fruitCnt);
             for (int i = 0; i < world.WIDTH; i++) {
                 for (int j = 0; j < world.HEIGHT; j++) {

@@ -47,8 +47,8 @@ public class Move {
             if (ttp == 2) {
                 if (t == 4)
                     world.monsterCnt++;
-                else if (t == 3)
-                    world.player.COUNT++;
+                else if (t >= 10)
+                    world.playerCnt++;
                 return 1;
             }
         } else if (t == 4) {

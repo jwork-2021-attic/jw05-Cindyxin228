@@ -25,8 +25,8 @@ public class Continue {
             if (world.monsterCnt != -1) {
                 ifRecord = true;
                 System.out.println(world.monsterCnt);
-                world.player.COUNT = record.read();
-                System.out.println(world.player.COUNT);
+                world.playerCnt = record.read();
+                System.out.println(world.playerCnt);
                 world.fruitCnt = record.read();
                 System.out.println(world.fruitCnt);
                 for (int i = 0; i < world.WIDTH; i++) {
