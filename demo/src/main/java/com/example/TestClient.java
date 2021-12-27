@@ -26,7 +26,10 @@ import com.example.com.anish.monsters.Number;
 import com.example.com.anish.monsters.Character;
 import com.example.com.anish.monsters.Monster;
 import com.example.com.anish.monsters.Save;
+import com.example.com.anish.monsters.Wall;
 import com.example.com.anish.monsters.Continue;
+import com.example.com.anish.monsters.Floor;
+import com.example.com.anish.monsters.Fruit;
 
 /**
  * 
@@ -175,12 +178,24 @@ public class TestClient extends JFrame implements KeyListener {
 					screen.world.fruitCnt = buffer.getInt();
 					for (int i = 0; i < screen.world.WIDTH; i++) {
 						for (int j = 0; j < screen.world.HEIGHT; j++) {
+							screen.world.put(new Floor(screen.world), i, j);
 							screen.world.mg.maze[i][j] = buffer.getInt();
+							if (screen.world.mg.maze[i][j] == 0) {
+								screen.world.put(new Wall(screen.world), i, j);
+							} else if (screen.world.mg.maze[i][j] == 2) {
+								screen.world.put(new Fruit(Color.GRAY, screen.world), i, j);
+							} else if (screen.world.mg.maze[i][j] >= 10) {
+								System.out.println(screen.world.players[0].id);
+								screen.world.put(screen.world.players[screen.world.mg.maze[i][j] - 10], i, j);
+								screen.world.players[screen.world.mg.maze[i][j] - 10].setPosition(i, j);
+							} else if (screen.world.mg.maze[i][j] == 4) {
+								new Monster(Color.yellow, screen.world, i, j);
+							}
 						}
 					}
 
 					try {
-						TimeUnit.MILLISECONDS.sleep(500);
+						TimeUnit.MILLISECONDS.sleep(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -206,45 +221,16 @@ public class TestClient extends JFrame implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		ByteBuffer buffer = ByteBuffer.allocate(74);
-		int keyValue = 0;
-		// new game "N" 4
-		// continue "c" 5
-		switch (e.getKeyCode()) {
-			case 78:
-				// new a game
-				keyValue = 4;
-				break;
-			case 67:
-				// continue a game
-				keyValue = 5;
-				break;
-			case KeyEvent.VK_UP:
-				keyValue = 0;
-				break;
-			case KeyEvent.VK_DOWN:
-				keyValue = 1;
-				break;
-			case KeyEvent.VK_LEFT:
-				keyValue = 2;
-				break;
-			case KeyEvent.VK_RIGHT:
-				keyValue = 3;
-				break;
-			case 83:
-				// save
-				keyValue = 6;
-				break;
-		}
 		buffer.putInt(id);
 		buffer.putInt(2);
-		buffer.putInt(keyValue);
+		buffer.putInt(e.getKeyCode());
 		buffer.flip();
 		try {
 			client.write(buffer);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		System.out.println(keyValue);
+		System.out.println(e.getKeyCode());
 		buffer.clear();
 	}
 
@@ -279,7 +265,7 @@ public class TestClient extends JFrame implements KeyListener {
 			// System.out.println(messages[i]);
 			buffer.clear();
 			try {
-				TimeUnit.MILLISECONDS.sleep(500);
+				TimeUnit.MILLISECONDS.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

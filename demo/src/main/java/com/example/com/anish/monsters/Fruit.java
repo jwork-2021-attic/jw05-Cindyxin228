@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class Fruit extends Thing {
 
-    Fruit(Color color, World world) {
+    public Fruit(Color color, World world) {
         super(color, (char) 3, world);
     }
 }

@@ -44,7 +44,11 @@ public class World {
         if (tiles == null) {
             tiles = new Tile[WIDTH][HEIGHT];
         }
-
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                tiles[i][j] = new Tile<>(i, j);
+            }
+        }
         // mg.dfsMaze(0, 0, mg.visited);
     }
 
@@ -69,7 +73,6 @@ public class World {
         fruitCnt = mg.generateMaze();
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                tiles[i][j] = new Tile<>(i, j);
                 tiles[i][j].setThing(new Floor(this));
                 if (mg.maze[i][j] == 0) {
                     tiles[i][j].setThing(new Wall(this));
@@ -94,7 +97,6 @@ public class World {
         monsters = new Monster[10];
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                tiles[i][j] = new Tile<>(i, j);
                 tiles[i][j].setThing(new Floor(this));
                 if (mg.maze[i][j] == 0) {
                     tiles[i][j].setThing(new Wall(this));
@@ -132,7 +134,7 @@ public class World {
         return this.tiles[x][y].getThing();
     }
 
-    public synchronized void put(Thing t, int x, int y) {
+    public void put(Thing t, int x, int y) {
         this.tiles[x][y].setThing(t);
     }
 
