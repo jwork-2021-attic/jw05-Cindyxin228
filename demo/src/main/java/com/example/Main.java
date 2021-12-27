@@ -35,7 +35,7 @@ import com.example.com.anish.screen.WorldScreen;
 public class Main extends JFrame implements KeyListener {
 
     private AsciiPanel terminal;
-    private Screen screen;
+    private WorldScreen screen;
 
     public Main() {
         super();
@@ -61,7 +61,7 @@ public class Main extends JFrame implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        screen = screen.respondToUserInput(e);
+        screen = (WorldScreen) screen.respondToUserInput(e);
         repaint();
     }
 
@@ -70,140 +70,130 @@ public class Main extends JFrame implements KeyListener {
 
     }
 
-    public class EchoNIOServer {
-        private Selector selector;
+    public class EchoServer implements Runnable {
+        Selector selector;
+        ServerSocketChannel serverChannel;
+        int playerNumber;
 
-        private InetSocketAddress listenAddress;
-        private final static int PORT = 9093;
-        WorldScreen screen;
-
-        private Player[] players;
-        private int playerNum;
-        private int startNum;
-        private int continueNum;
-
-        public EchoNIOServer(String address, int port) throws IOException {
-            listenAddress = new InetSocketAddress(address, PORT);
-            players = new Player[20];
-            playerNum = 0;
-            startNum = 0;
-            continueNum = 0;
-            screen = new WorldScreen();
-        }
-
-        /**
-         * Start the server
-         * 
-         * @throws IOException
-         */
-        private void startServer() throws IOException {
-            this.selector = Selector.open();
-            ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        public EchoServer() throws IOException {
+            playerNumber = 0;
+            selector = Selector.open();
+            serverChannel = ServerSocketChannel.open();
             serverChannel.configureBlocking(false);
 
-            // bind server socket channel to port
-            serverChannel.socket().bind(listenAddress);
-            serverChannel.register(this.selector, SelectionKey.OP_ACCEPT);
+            InetSocketAddress hostAddress = new InetSocketAddress("localhost", 9093);
+            serverChannel.bind(hostAddress);
+            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        }
 
-            System.out.println("Server started on port >> " + PORT);
-
+        @Override
+        public void run() {
             while (true) {
-                // wait for events
-                int readyCount = selector.select();
+                int readyCount = -1;
+                try {
+                    readyCount = selector.select();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 if (readyCount == 0) {
                     continue;
                 }
 
-                // process selected keys...
                 Set<SelectionKey> readyKeys = selector.selectedKeys();
-                Iterator iterator = readyKeys.iterator();
+                java.util.Iterator<SelectionKey> iterator = readyKeys.iterator();
+
                 while (iterator.hasNext()) {
-                    SelectionKey key = (SelectionKey) iterator.next();
-
-                    // Remove key from set so we don't process it twice
+                    SelectionKey key = iterator.next();
                     iterator.remove();
-
-                    if (!key.isValid()) {
+                    if (key.isAcceptable()) {
+                        ServerSocketChannel server = (ServerSocketChannel) key.channel();
+                        SocketChannel client;
+                        try {
+                            client = server.accept();
+                            client.configureBlocking(false);
+                            client.register(selector, SelectionKey.OP_READ);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         continue;
                     }
+                    if (key.isReadable()) {
+                        SocketChannel client = (SocketChannel) key.channel();
+                        int BUFFER_SIZE = 1024;
+                        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                        try {
+                            client.read(buffer);
+                            buffer.flip();
+                            // request:
+                            // id, 0(accept)/1(send info)/2(key press)
+                            int id = buffer.getInt();
+                            System.out.println(id);
+                            int type = buffer.getInt();
+                            if (type == 0) {
+                                if (id >= screen.world.playerNum)
+                                    screen.world.playerNum = id + 1;
+                            } else if (type == 2) {
+                                int keyPressed = buffer.getInt();
+                                screen.switchKey(keyPressed);
+                            } else if (type == 1) {
+                                ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE * 10);
+                                if (!screen.world.state)
+                                    buf.putInt(0);
+                                else
+                                    buf.putInt(1);
+                                buf.putInt(screen.world.ifBegin);
+                                if (!screen.world.ifSucceed)
+                                    buf.putInt(0);
+                                else
+                                    buf.putInt(1);
+                                if (!screen.world.ifFinish)
+                                    buf.putInt(0);
+                                else
+                                    buf.putInt(1);
+                                buf.putInt(screen.world.monsterCnt);
+                                buf.putInt(screen.world.playerCnt);
+                                buf.putInt(screen.world.fruitCnt);
 
-                    if (key.isAcceptable()) { // Accept client connections
-                        this.accept(key);
-                    } else if (key.isReadable()) { // Read from client
-                        this.read(key);
-                    } else if (key.isWritable()) {
-                        this.write(key);
+                                for (int i = 0; i < screen.world.WIDTH; i++) {
+                                    for (int j = 0; j < screen.world.HEIGHT; j++) {
+                                        buf.putInt(screen.world.mg.maze[i][j]);
+                                    }
+                                }
+                                buf.flip();
+                                client.write(buf);
+                            }
+                        } catch (Exception e) {
+                            // e.printStackTrace();
+                            continue;
+                        }
+                    }
+                    if (key.isWritable()) {
+                        SocketChannel client = (SocketChannel) key.channel();
                     }
                 }
             }
         }
-
-        // accept client connection
-        private void accept(SelectionKey key) throws IOException {
-            ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
-            SocketChannel channel = serverChannel.accept();
-            channel.configureBlocking(false);
-            Socket socket = channel.socket();
-            playerNum++;
-            SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-
-            // System.out.println("Connected to: " + remoteAddr);
-
-            /*
-             * Register channel with selector for further IO (record it for read/write
-             * operations, here we have used read operation)
-             */
-            channel.register(this.selector, SelectionKey.OP_READ);
-        }
-
-        // read from the socket channel
-        private void read(SelectionKey key) throws IOException {
-            SocketChannel channel = (SocketChannel) key.channel();
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            int numRead = -1;
-            numRead = channel.read(buffer);
-
-            if (numRead == -1) {
-                Socket socket = channel.socket();
-                SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-                System.out.println("Connection closed by client: " + remoteAddr);
-                channel.close();
-                key.cancel();
-                return;
-            }
-
-            byte[] data = new byte[numRead];
-            System.arraycopy(buffer.array(), 0, data, 0, numRead);
-
-            System.out.println("Got: " + new String(data));
-        }
-
-        private void write(SelectionKey key) throws IOException {
-            SocketChannel channel = (SocketChannel) key.channel();
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-        }
-
     }
 
     public static void main(String[] args) throws InterruptedException {
         Main app = new Main();
-        // server另开一个线程
+        try {
+            new Thread(app.new EchoServer()).start();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        // app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // app.setVisible(true);
+        System.out.println("start");
+        // while (true) {
+        // app.repaint();
         // try {
-        // app.new EchoNIOServer("localhost", 9093).startServer();
-        // } catch (IOException e) {
+        // TimeUnit.MILLISECONDS.sleep(500);
+        // } catch (InterruptedException e) {
         // e.printStackTrace();
         // }
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        app.setVisible(true);
-        System.out.println("start");
-        while (true) {
-            app.repaint();
-            try {
-                TimeUnit.MILLISECONDS.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        // }
     }
 
 }

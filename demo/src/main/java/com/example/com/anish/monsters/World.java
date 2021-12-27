@@ -17,11 +17,11 @@ public class World {
     public int fruitCnt;
     public Move allMove;
     public int ifBegin;
-    public int playerNum;
+    public int playerNum; // 玩家数量
     public int playerCnt;
 
     private Tile<Thing>[][] tiles;
-    MazeGenerator mg;
+    public MazeGenerator mg;
 
     public World() {
 
@@ -31,13 +31,13 @@ public class World {
             players[i] = new Player(Color.RED, this);
             players[i].id += i;
         }
-        state = true;
+        state = true; // 是否结束，由玩家是否与怪物碰撞得到
         monsterNum = 0;
         ifSucceed = false;
-        ifFinish = false;
+        ifFinish = false; // 是否结束，由豆子是否都被吃掉得到
         monsterCnt = 0;
         playerCnt = 0;
-        ifBegin = 0;
+        ifBegin = 0; // 有无开始，由玩家是否选择n得到
         playerNum = 0;
         mg = new MazeGenerator(WIDTH);
 

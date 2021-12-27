@@ -25,6 +25,7 @@ public class WorldScreen implements Screen {
 
     private Save mySave;
     private Continue myContinue;
+    public int x;
     // String[] sortSteps;
 
     public WorldScreen() {
@@ -39,6 +40,10 @@ public class WorldScreen implements Screen {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setX() {
+        x = 0;
     }
 
     public void startThread(int _playerNum) {
@@ -177,12 +182,11 @@ public class WorldScreen implements Screen {
 
     int i = 0;
 
-    @Override
-    public Screen respondToUserInput(KeyEvent e) {
+    public void switchKey(int keyValue) {
         if (world.ifBegin == 0) {
             // new game "N"
             // continue "c"
-            switch (e.getKeyCode()) {
+            switch (keyValue) {
                 case 78:
                     startThread(1);
                     break;
@@ -197,7 +201,7 @@ public class WorldScreen implements Screen {
             }
         } else {
             int dir = 0;
-            switch (e.getKeyCode()) {
+            switch (keyValue) {
                 case KeyEvent.VK_UP:
                     dir = 0;
                     break;
@@ -218,11 +222,16 @@ public class WorldScreen implements Screen {
                     }
                     break;
             }
-            if (e.getKeyCode() != 83) {
+            if (keyValue != 83) {
                 world.players[0].direction = dir;
                 world.players[0].setKey();
             }
         }
+    }
+
+    @Override
+    public Screen respondToUserInput(KeyEvent e) {
+        switchKey(e.getKeyCode());
         return this;
     }
 

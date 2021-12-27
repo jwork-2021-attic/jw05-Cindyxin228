@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.Arrays;
 import java.util.Vector;
 
-class MazeGenerator {
+public class MazeGenerator {
 
     private Stack<Node> stack = new Stack<>();
     private Random rand = new Random();
