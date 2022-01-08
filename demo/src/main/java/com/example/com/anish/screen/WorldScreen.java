@@ -26,11 +26,13 @@ public class WorldScreen implements Screen {
     private Save mySave;
     private Continue myContinue;
     public int x;
+    private int startNum;
     // String[] sortSteps;
 
     public WorldScreen() {
         world = new World();
         final int size = 16;
+        startNum = 0;
         world.ifBegin = 0;
         p = new Thread[20];
         m = new Thread[10];
@@ -69,10 +71,10 @@ public class WorldScreen implements Screen {
 
     public void continueThread(int _playerNum) throws IOException {
         System.out.println("continue");
-        world.playerNum = _playerNum;
         boolean exist = myContinue.readRecord();
         if (exist) {
             world.continueGame();
+            world.playerNum = _playerNum;
             for (int i = 0; i < world.monsterNum; i++) {
                 m[i] = new Thread(world.monsters[i]);
                 m[i].start();
@@ -188,12 +190,15 @@ public class WorldScreen implements Screen {
             // continue "c"
             switch (keyValue) {
                 case 78:
-                    startThread(1);
+                    startNum++;
+                    if (startNum == world.playerNum)
+                        startThread(startNum);
                     break;
                 case 67:
 
                     try {
-                        continueThread(1);
+                        world.contiNum++;
+                        continueThread(world.contiNum);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }

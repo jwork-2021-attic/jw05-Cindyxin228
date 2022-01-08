@@ -19,6 +19,7 @@ public class World {
     public int ifBegin;
     public int playerNum; // 玩家数量
     public int playerCnt;
+    public int contiNum;
 
     private Tile<Thing>[][] tiles;
     public MazeGenerator mg;
@@ -31,6 +32,7 @@ public class World {
             players[i] = new Player(Color.RED, this);
             players[i].id += i;
         }
+        contiNum = 0;
         state = true; // 是否结束，由玩家是否与怪物碰撞得到
         monsterNum = 0;
         ifSucceed = false;

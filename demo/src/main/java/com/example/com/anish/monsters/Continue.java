@@ -21,6 +21,9 @@ public class Continue {
             return ifRecord;
         try {
             record = new FileInputStream("./record.txt");
+            int playerNum = record.read();
+            if (playerNum != world.contiNum)
+                return false;
             world.monsterCnt = record.read();
             if (world.monsterCnt != -1) {
                 ifRecord = true;
