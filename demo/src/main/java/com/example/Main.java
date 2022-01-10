@@ -13,6 +13,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.Buffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -123,7 +124,7 @@ public class Main extends JFrame implements KeyListener {
                         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
                         try {
                             client.read(buffer);
-                            buffer.flip();
+                            ((Buffer) buffer).flip();
                             // request:
                             // id, 0(accept)/1(send info)/2(key press)
                             int id = buffer.getInt();
@@ -159,7 +160,7 @@ public class Main extends JFrame implements KeyListener {
                                         buf.putInt(screen.world.mg.maze[i][j]);
                                     }
                                 }
-                                buf.flip();
+                                ((Buffer) buf).flip();
                                 client.write(buf);
                             }
                         } catch (Exception e) {

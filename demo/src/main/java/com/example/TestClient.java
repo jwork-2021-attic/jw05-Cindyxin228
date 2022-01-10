@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.Buffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
@@ -64,7 +65,7 @@ public class TestClient extends JFrame implements KeyListener {
 		ByteBuffer buffer = ByteBuffer.allocate(74);
 		buffer.putInt(id);
 		buffer.putInt(0);
-		buffer.flip();
+		((Buffer) buffer).flip();
 		try {
 			client.write(buffer);
 		} catch (IOException e1) {
@@ -155,7 +156,7 @@ public class TestClient extends JFrame implements KeyListener {
 			while (true) {
 				try {
 					numRead = client.read(buffer);
-					buffer.flip();
+					((Buffer) buffer).flip();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -224,14 +225,14 @@ public class TestClient extends JFrame implements KeyListener {
 		buffer.putInt(id);
 		buffer.putInt(2);
 		buffer.putInt(e.getKeyCode());
-		buffer.flip();
+		((Buffer) buffer).flip();
 		try {
 			client.write(buffer);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		System.out.println(e.getKeyCode());
-		buffer.clear();
+		((Buffer) buffer).clear();
 	}
 
 	@Override
@@ -256,14 +257,14 @@ public class TestClient extends JFrame implements KeyListener {
 			ByteBuffer buffer = ByteBuffer.allocate(74);
 			buffer.putInt(testClient.id);
 			buffer.putInt(1);
-			buffer.flip();
+			((Buffer) buffer).flip();
 			try {
 				testClient.client.write(buffer);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 			// System.out.println(messages[i]);
-			buffer.clear();
+			((Buffer) buffer).clear();
 			try {
 				TimeUnit.MILLISECONDS.sleep(50);
 			} catch (InterruptedException e) {
