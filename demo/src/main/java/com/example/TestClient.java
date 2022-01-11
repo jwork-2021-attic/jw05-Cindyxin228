@@ -1,5 +1,8 @@
 package com.example;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -48,17 +51,31 @@ public class TestClient extends JFrame implements KeyListener {
 	SocketChannel client;
 	private AsciiPanel terminal;
 	int id;
-	static int CLIENTNUM = 0;
 	private WorldScreen screen;
 
 	public TestClient() throws IOException {
 		super();
 		hostAddress = new InetSocketAddress("localhost", 9093);
 		client = SocketChannel.open(hostAddress);
-		id = CLIENTNUM;
+		FileInputStream playerNum = null;
+		try {
+			playerNum = new FileInputStream("./playerNum.txt");
+			id = playerNum.read();
+			FileOutputStream record = null;
+			try {
+				record = new FileOutputStream("./playerNum.txt");
+				record.write(id + 1);
+			} finally {
+				record.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("testId " + id);
 		screen = new WorldScreen();
-		CLIENTNUM++;
 		terminal = new AsciiPanel(50, 30, AsciiFont.TALRYTH_15_15);
+
 		add(terminal);
 		pack();
 		addKeyListener(this);
@@ -162,9 +179,9 @@ public class TestClient extends JFrame implements KeyListener {
 				}
 				if (numRead > 0) {
 					if (buffer.getInt() == 0)
-						screen.world.state = true;
-					else
 						screen.world.state = false;
+					else
+						screen.world.state = true;
 					screen.world.ifBegin = buffer.getInt();
 					if (buffer.getInt() == 0)
 						screen.world.ifSucceed = false;
@@ -186,7 +203,7 @@ public class TestClient extends JFrame implements KeyListener {
 							} else if (screen.world.mg.maze[i][j] == 2) {
 								screen.world.put(new Fruit(Color.GRAY, screen.world), i, j);
 							} else if (screen.world.mg.maze[i][j] >= 10) {
-								System.out.println(screen.world.players[0].id);
+								System.out.println(screen.world.players[screen.world.mg.maze[i][j] - 10].id);
 								screen.world.put(screen.world.players[screen.world.mg.maze[i][j] - 10], i, j);
 								screen.world.players[screen.world.mg.maze[i][j] - 10].setPosition(i, j);
 							} else if (screen.world.mg.maze[i][j] == 4) {

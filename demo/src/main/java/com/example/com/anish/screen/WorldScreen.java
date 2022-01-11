@@ -184,7 +184,7 @@ public class WorldScreen implements Screen {
 
     int i = 0;
 
-    public void switchKey(int keyValue) {
+    public void switchKey(int keyValue, int id) {
         if (world.ifBegin == 0) {
             // new game "N"
             // continue "c"
@@ -228,15 +228,15 @@ public class WorldScreen implements Screen {
                     break;
             }
             if (keyValue != 83) {
-                world.players[0].direction = dir;
-                world.players[0].setKey();
+                world.players[id].direction = dir;
+                world.players[id].setKey();
             }
         }
     }
 
     @Override
     public Screen respondToUserInput(KeyEvent e) {
-        switchKey(e.getKeyCode());
+        switchKey(e.getKeyCode(), 0);
         return this;
     }
 

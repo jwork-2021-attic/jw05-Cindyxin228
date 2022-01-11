@@ -8,6 +8,9 @@ import javax.swing.JFrame;
 import com.example.asciiPanel.AsciiFont;
 import com.example.asciiPanel.AsciiPanel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -135,7 +138,7 @@ public class Main extends JFrame implements KeyListener {
                                     screen.world.playerNum = id + 1;
                             } else if (type == 2) {
                                 int keyPressed = buffer.getInt();
-                                screen.switchKey(keyPressed);
+                                screen.switchKey(keyPressed, id);
                             } else if (type == 1) {
                                 ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE * 10);
                                 if (!screen.world.state)
@@ -177,6 +180,21 @@ public class Main extends JFrame implements KeyListener {
     }
 
     public static void main(String[] args) throws InterruptedException {
+        File file = new File("./playerNum.txt");
+        FileOutputStream record = null;
+        try {
+            record = new FileOutputStream("./playerNum.txt");
+            record.write(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                record.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Main app = new Main();
         try {
             new Thread(app.new EchoServer()).start();

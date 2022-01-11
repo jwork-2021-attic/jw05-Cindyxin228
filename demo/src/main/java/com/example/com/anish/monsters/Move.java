@@ -19,6 +19,8 @@ public class Move {
     }
 
     public synchronized int move(Creature c, int x, int y, int dir, int t) {
+        System.out.print(t);
+        System.out.println(" " + c.getColor());
         int xPos = x, yPos = y;
         switch (dir) {
             case 0:
@@ -39,7 +41,7 @@ public class Move {
             world.put(c, xPos, yPos);
             int ttp = world.mg.maze[xPos][yPos];
             world.setMazeInfo(x, y, 1);
-            if (t * world.mg.maze[xPos][yPos] == 12) {
+            if (t * world.mg.maze[xPos][yPos] >= 40) {
                 world.state = false;
                 return 0;
             }

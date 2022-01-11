@@ -28,10 +28,12 @@ public class World {
 
         allMove = new Move(this);
         players = new Player[20];
+        Color[] c = { Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.LIGHT_GRAY, Color.WHITE };
         for (int i = 0; i < 20; i++) {
-            players[i] = new Player(Color.RED, this);
+            players[i] = new Player(c[i % 6], this);
             players[i].id += i;
         }
+
         contiNum = 0;
         state = true; // 是否结束，由玩家是否与怪物碰撞得到
         monsterNum = 0;
@@ -55,16 +57,30 @@ public class World {
     }
 
     public void newPlayer(Player _player) {
-        Random r = new Random();
-        int i = r.nextInt(30);
-        int j = r.nextInt(30);
-        boolean found = false;
-        while (!found) {
-            if (mg.maze[i][j] == 1) {
-                found = true;
-                tiles[i][j].setThing(_player);
-                _player.setPosition(i, j);
-                mg.maze[i][j] = _player.id;
+        if (mg.maze[0][1] == 1) {
+            tiles[0][1].setThing(_player);
+            _player.setPosition(0, 1);
+            mg.maze[0][1] = _player.id;
+        } else if (mg.maze[0][2] == 1) {
+            tiles[0][2].setThing(_player);
+            _player.setPosition(0, 2);
+            mg.maze[0][2] = _player.id;
+        } else if (mg.maze[0][3] == 1) {
+            tiles[0][3].setThing(_player);
+            _player.setPosition(0, 3);
+            mg.maze[0][3] = _player.id;
+        } else {
+            Random r = new Random();
+            int i = r.nextInt(30);
+            int j = r.nextInt(30);
+            boolean found = false;
+            while (!found) {
+                if (mg.maze[i][j] == 1) {
+                    found = true;
+                    tiles[i][j].setThing(_player);
+                    _player.setPosition(i, j);
+                    mg.maze[i][j] = _player.id;
+                }
             }
         }
     }

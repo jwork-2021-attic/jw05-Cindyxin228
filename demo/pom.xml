@@ -6,7 +6,7 @@
 
   <groupId>com.example</groupId>
   <artifactId>demo</artifactId>
-  <version>1.0-myClient</version>
+  <version>1.0-myServer</version>
 
   <name>demo</name>
   <!-- FIXME change it to the project's website -->
