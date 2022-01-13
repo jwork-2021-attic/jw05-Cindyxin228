@@ -23,6 +23,11 @@ public class AppTest {
             screen.world.players[0].direction = 1;
             screen.world.players[0].setKey();
         }
+        screen.judgeFinish();
+        screen.judgeSucceed();
+        screen.world.players[0].direction = 2;
+        screen.world.players[0].setKey();
+        screen.switchKey(83, 0);
         assertTrue(true);
     }
 }
